@@ -38,7 +38,7 @@ class Robot : public frc::IterativeRobot {
 	//pnuematics
 
 	//setup joysticks
-	frc::Joystick m_stick{1};
+	//frc::Joystick m_stick{1};
 	Joystick m_Xbox{0};
 	//setup joysticks
 
@@ -51,8 +51,15 @@ class Robot : public frc::IterativeRobot {
 
 public:
 
+	void DisabledPeriodic() {
+		if (m_Xbox.GetRawButton(8)){
+
+		}
+	}
+
 	void TeleopInit() {
 		Compressor1.SetClosedLoopControl(true);
+		CameraServer::GetInstance()->StartAutomaticCapture();
 
 	}
 
@@ -61,12 +68,12 @@ public:
 		//pnuematics shenanigans
 		if (m_Xbox.GetRawButtonPressed(2) and toggled2 == false) {
 			toggled2 = true;
-			R_Solenoid.Set(frc::DoubleSolenoid::Value::kForward);
-			L_Solenoid.Set(frc::DoubleSolenoid::Value::kForward);
-		} else if (m_Xbox.GetRawButtonReleased(2)) {
-			toggled2 = false;
 			R_Solenoid.Set(frc::DoubleSolenoid::Value::kReverse);
 			L_Solenoid.Set(frc::DoubleSolenoid::Value::kReverse);
+		} else if (m_Xbox.GetRawButtonReleased(2)) {
+			toggled2 = false;
+			R_Solenoid.Set(frc::DoubleSolenoid::Value::kForward);
+			L_Solenoid.Set(frc::DoubleSolenoid::Value::kForward);
 		}
 		//pnuematics shenanigans
 
@@ -92,7 +99,7 @@ public:
 		if (tankDrive==-1) {
 			m_drive.ArcadeDrive(-m_Xbox.GetRawAxis(1) * speed, m_Xbox.GetRawAxis(0) * speed);
 		} else if (tankDrive==1){
-			m_drive.TankDrive(-m_Xbox.GetRawAxis(1) * speed, -m_Xbox.GetRawAxis(5)* speed);
+			m_drive.CurvatureDrive(-m_Xbox.GetRawAxis(1) * speed, m_Xbox.GetRawAxis(4) + 0.15, m_Xbox.GetRawButton(6));
 		}
 		//drive!
 	}
