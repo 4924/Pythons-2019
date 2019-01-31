@@ -1,0 +1,19 @@
+void setup()
+{
+  pinMode(11, OUTPUT);
+  pinMode(5, OUTPUT);
+}
+
+void loop()
+{
+  while (1 == 1) {
+    analogWrite(11, 20);
+    delay(1); // Wait for 1 millisecond(s)
+    digitalWrite(5, HIGH);
+    delay(1000); // Wait for 1000 millisecond(s)
+    analogWrite(11, 1);
+    delay(1); // Wait for 1 millisecond(s)
+    digitalWrite(5, LOW);
+    delay(1000); // Wait for 1000 millisecond(s)
+  }
+}
