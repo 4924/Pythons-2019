@@ -20,15 +20,18 @@
 class Robot : public frc::IterativeRobot {
 
 	//drivetrain setup
-	frc::Spark m_frontLeft{1};
+	frc::Spark m_frontLeft{2};
 	frc::Spark m_rearLeft{3};
 	frc::SpeedControllerGroup m_left{m_frontLeft, m_rearLeft};
 
 	frc::Spark m_frontRight{0};
-	frc::Spark m_rearRight{2};
+	frc::Spark m_rearRight{1};
 	frc::SpeedControllerGroup m_right{m_frontRight, m_rearRight};
 
 	frc::DifferentialDrive m_drive{m_left, m_right};
+
+	frc::Spark m_armMotors{4};
+	frc::Spark m_intakeMotor{5};
 	//drivetrain setup
 
 	//setup joysticks
@@ -43,13 +46,16 @@ class Robot : public frc::IterativeRobot {
 	bool toggled;
 	bool toggled2;
 	float speed;
+	float armSpeed;
+	float intakeSpeed;
 	//Random variables
 
 private:
 
 	void RobotInit()
 	{
-		CameraServer::GetInstance()->StartAutomaticCapture();
+		CameraServer::GetInstance()->StartAutomaticCapture(0);
+		CameraServer::GetInstance()->StartAutomaticCapture(1);
 	}
 
 
@@ -61,15 +67,19 @@ public:
 	}
 
 	void TeleopPeriodic() {
-		printf("yote");
 		//speed set
-		speed = m_Xbox.GetRawAxis(3) + 0.5;
-		if (speed > 1){
+		speed = m_Xbox.GetRawAxis(3) + 1;
+		if (speed > 1) {
 
-			speed = 1;
-		} else if (speed < 1) {
 			speed = -1;
 		}
+
+		else if (speed < 1) {
+			speed = 1;
+		}
+
+		armSpeed = -0.25;
+		intakeSpeed = 0;
 		//speed set
 
 		//tank/arcade toggling
@@ -83,15 +93,28 @@ public:
 
 		//drive!
 		if (tankDrive==-1) {
-			m_drive.ArcadeDrive(m_Xbox.GetRawAxis(1) * speed, -m_Xbox.GetRawAxis(0) * speed);
+			m_drive.ArcadeDrive(-m_Xbox.GetRawAxis(1) * (speed - 0.5), m_Xbox.GetRawAxis(0) * (speed - 0.5));
 		} else if (tankDrive==1){
 			m_drive.TankDrive(m_Xbox.GetRawAxis(0) * speed, -m_Xbox.GetRawAxis(1), m_Xbox.GetRawButton(6));
 		}
 		//drive!
+
+		m_armMotors.Set(m_Xbox.GetRawAxis(5) * armSpeed);
+
+		if (m_Xbox.GetRawButtonPressed(5)) {
+			m_intakeMotor.Set(intakeSpeed + .75);
+		} else if (m_Xbox.GetRawButtonReleased(5)) {
+			m_intakeMotor.Set(intakeSpeed);
+		}
+
+		if (m_Xbox.GetRawButtonPressed(6)) {
+			m_intakeMotor.Set(intakeSpeed -0.75);
+		} else if (m_Xbox.GetRawButtonReleased(6)) {
+			m_intakeMotor.Set(intakeSpeed);
+		}
 	}
 
 
 };
 
 START_ROBOT_CLASS(Robot)
-
