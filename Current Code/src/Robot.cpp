@@ -67,15 +67,23 @@ public:
 	}
 
 	void TeleopPeriodic() {
-		//speed set
-		speed = m_Xbox.GetRawAxis(3) + 1;
-		if (speed > 1) {
 
-			speed = -1;
+		if (m_Xbox.GetRawAxis(1) > 0.55 and speed < 0.3) {
+			speed += 0.05;
+		} if (m_Xbox.GetRawAxis(1) < 0.45 and speed < 0.3) {
+			speed += 0.05;
+		} else {
+			speed -= 0.05;
 		}
 
-		else if (speed < 1) {
+		//speed set
+
+		if (speed > 1) {
 			speed = 1;
+		}
+
+		else if (speed < 0) {
+			speed = 0;
 		}
 
 		armSpeed = -0.25;
